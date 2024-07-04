@@ -1,57 +1,41 @@
 <template>
   <div class="container">
-    <h1>{{ isEdit ? 'Edit Resep' : 'Unggah Resep Baru' }}</h1>
+    <h1>Unggah Resep Baru</h1>
     <form @submit.prevent="submitRecipe">
       <label for="judul">Judul:</label>
-      <input type="text" id="judul" v-model="recipe.judul" required>
+      <input type="text" id="judul" v-model="judul" required>
 
       <label for="deskripsi">Deskripsi:</label>
-      <textarea id="deskripsi" v-model="recipe.deskripsi" required></textarea>
+      <textarea id="deskripsi" v-model="deskripsi" required></textarea>
 
       <label for="image">Gambar:</label>
       <input type="file" id="image" @change="onFileChange" required>
 
       <label for="asal">Asal:</label>
-      <input type="text" id="asal" v-model="recipe.asal" required>
+      <input type="text" id="asal" v-model="asal" required>
 
       <label for="kategori">Kategori:</label>
-      <input type="text" id="kategori" v-model="recipe.kategori" required>
+      <input type="text" id="kategori" v-model="kategori" required>
 
-      <button class="btn" type="submit">{{ isEdit ? 'Update Resep' : 'Unggah Resep' }}</button>
-      <button class="btn" type="button" @click="resetForm">Batal</button>
+      <button class="btn" type="submit">Unggah Resep</button>
     </form>
   </div>
 </template>
 
 <script>
-  
 export default {
   data() {
     return {
       judul: '',
       deskripsi: '',
-      fileGambar: null,
       urlGambar: '',
       asal: '',
       kategori: ''
     };
   },
   methods: {
-    onFileChange(event) {
-      this.fileGambar = event.target.files[0];
-    },
     async submitRecipe() {
       try {
-        if (this.fileGambar) {
-          // Upload gambar ke Firebase Storage
-          const storageRef = storage.ref();
-          const fileRef = storageRef.child(`images/${this.fileGambar.name}`);
-          await fileRef.put(this.fileGambar);
-
-          // Dapatkan URL gambar
-          this.urlGambar = await fileRef.getDownloadURL();
-        }
-
         // Simpan resep ke Firestore
         const docRef = await firestore.collection('resep').add({
           Judul: this.judul,
@@ -78,7 +62,6 @@ export default {
     }
   }
 };
-
 </script>
 
 <style scoped>
