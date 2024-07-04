@@ -24,37 +24,16 @@
 </template>
 
 <script>
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-import 'firebase/storage';
-
-// Inisialisasi Firebase
-if (!firebase.apps.length) {
-  firebase.initializeApp({
-    apiKey: 'API_KEY',
-    authDomain: 'PROJECT_ID.firebaseapp.com',
-    projectId: 'PROJECT_ID',
-    storageBucket: 'PROJECT_ID.appspot.com',
-    messagingSenderId: 'SENDER_ID',
-    appId: 'APP_ID'
-  });
-}
-
-const firestore = firebase.firestore();
-const storage = firebase.storage();
-
+  
 export default {
   data() {
     return {
-      isEdit: false,
-      recipe: {
-        judul: '',
-        deskripsi: '',
-        urlGambar: '',
-        asal: '',
-        kategori: ''
-      },
-      fileGambar: null
+      judul: '',
+      deskripsi: '',
+      fileGambar: null,
+      urlGambar: '',
+      asal: '',
+      kategori: ''
     };
   },
   methods: {
@@ -70,16 +49,16 @@ export default {
           await fileRef.put(this.fileGambar);
 
           // Dapatkan URL gambar
-          this.recipe.urlGambar = await fileRef.getDownloadURL();
+          this.urlGambar = await fileRef.getDownloadURL();
         }
 
         // Simpan resep ke Firestore
         const docRef = await firestore.collection('resep').add({
-          Judul: this.recipe.judul,
-          Deskripsi: this.recipe.deskripsi,
-          "URL Gambar": this.recipe.urlGambar,
-          Asal: this.recipe.asal,
-          Kategori: this.recipe.kategori,
+          Judul: this.judul,
+          Deskripsi: this.deskripsi,
+          "URL Gambar": this.urlGambar,
+          Asal: this.asal,
+          Kategori: this.kategori,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
@@ -96,19 +75,10 @@ export default {
         // Menampilkan pesan error
         alert("Terjadi kesalahan saat mengunggah resep.");
       }
-    },
-    resetForm() {
-      this.recipe = {
-        judul: '',
-        deskripsi: '',
-        urlGambar: '',
-        asal: '',
-        kategori: ''
-      };
-      this.fileGambar = null;
     }
   }
 };
+
 </script>
 
 <style scoped>
