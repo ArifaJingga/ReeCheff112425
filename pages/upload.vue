@@ -22,9 +22,7 @@
   </div>
 </template>
 
-<script>
-import { firestore } from '~/plugins/firebase.js';
-  
+<script>  
 export default {
   data() {
     return {
