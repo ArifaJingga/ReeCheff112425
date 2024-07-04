@@ -24,16 +24,19 @@
 </template>
 
 <script>
-  
+
 export default {
   data() {
     return {
-      judul: '',
-      deskripsi: '',
-      fileGambar: null,
-      urlGambar: '',
-      asal: '',
-      kategori: ''
+      isEdit: false,
+      recipe: {
+        judul: '',
+        deskripsi: '',
+        urlGambar: '',
+        asal: '',
+        kategori: ''
+      },
+      fileGambar: null
     };
   },
   methods: {
@@ -49,16 +52,16 @@ export default {
           await fileRef.put(this.fileGambar);
 
           // Dapatkan URL gambar
-          this.urlGambar = await fileRef.getDownloadURL();
+          this.recipe.urlGambar = await fileRef.getDownloadURL();
         }
 
         // Simpan resep ke Firestore
         const docRef = await firestore.collection('resep').add({
-          Judul: this.judul,
-          Deskripsi: this.deskripsi,
-          "URL Gambar": this.urlGambar,
-          Asal: this.asal,
-          Kategori: this.kategori,
+          Judul: this.recipe.judul,
+          Deskripsi: this.recipe.deskripsi,
+          "URL Gambar": this.recipe.urlGambar,
+          Asal: this.recipe.asal,
+          Kategori: this.recipe.kategori,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
@@ -75,10 +78,19 @@ export default {
         // Menampilkan pesan error
         alert("Terjadi kesalahan saat mengunggah resep.");
       }
+    },
+    resetForm() {
+      this.recipe = {
+        judul: '',
+        deskripsi: '',
+        urlGambar: '',
+        asal: '',
+        kategori: ''
+      };
+      this.fileGambar = null;
     }
   }
 };
-
 </script>
 
 <style scoped>
@@ -120,6 +132,11 @@ input, textarea {
   cursor: pointer;
   transition: background-color 0.3s;
 }
+
+.btn:hover {
+  background-color: #cc5200;
+}
+</style>
 
 .btn:hover {
   background-color: #cc5200;
