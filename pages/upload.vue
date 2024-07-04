@@ -8,8 +8,8 @@
       <label for="deskripsi">Deskripsi:</label>
       <textarea id="deskripsi" v-model="recipe.deskripsi" required></textarea>
 
-      <label for="urlGambar">URL Gambar:</label>
-      <input type="text" id="urlGambar" v-model="recipe.urlGambar" required>
+      <label for="image">Gambar:</label>
+      <input type="file" id="image" @change="onFileChange" required>
 
       <label for="asal">Asal:</label>
       <input type="text" id="asal" v-model="recipe.asal" required>
