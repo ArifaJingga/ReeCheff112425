@@ -8,9 +8,6 @@
       <label for="deskripsi">Deskripsi:</label>
       <textarea id="deskripsi" v-model="deskripsi" required></textarea>
 
-      <label for="image">Gambar:</label>
-      <input type="file" id="image" @change="onFileChange" required>
-
       <label for="asal">Asal:</label>
       <input type="text" id="asal" v-model="asal" required>
 
@@ -23,12 +20,12 @@
 </template>
 
 <script>
+
 export default {
   data() {
     return {
       judul: '',
       deskripsi: '',
-      urlGambar: '',
       asal: '',
       kategori: ''
     };
@@ -40,7 +37,6 @@ export default {
         const docRef = await firestore.collection('resep').add({
           Judul: this.judul,
           Deskripsi: this.deskripsi,
-          "URL Gambar": this.urlGambar,
           Asal: this.asal,
           Kategori: this.kategori,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -48,7 +44,7 @@ export default {
 
         console.log("Resep berhasil ditambahkan!", docRef.id);
 
-        // Menampilkan pesan sukses
+        // Tampilkan pesan sukses
         alert("Resep berhasil diunggah!");
 
         // Redirect ke halaman utama
@@ -56,7 +52,7 @@ export default {
 
       } catch (error) {
         console.error("Error adding recipe: ", error);
-        // Menampilkan pesan error
+        // Tampilkan pesan error
         alert("Terjadi kesalahan saat mengunggah resep.");
       }
     }
@@ -108,3 +104,4 @@ input, textarea {
   background-color: #cc5200;
 }
 </style>
+
