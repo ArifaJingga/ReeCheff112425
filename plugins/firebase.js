@@ -13,14 +13,14 @@ const firebaseConfig = {
     measurementId: "G-66EBPC65XN"
 }
 
-// Initialize Firebase
 if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+    firebase.initializeApp(firebaseConfig);
+  }
+  
+  const firestore = firebase.firestore();
+  
+  export { firebase, firestore };
 
-export const firestore = firebase.firestore();
-// Export firebase for other services to use
-export { firebase };
 
 
 
