@@ -26,67 +26,59 @@
 <script>
   
 export default {
-  props: {
-    initialRecipe: {
-      type: Object,
-      default: () => ({
-        judul: '',
-        deskripsi: '',
-        urlGambar: '',
-        asal: '',
-        kategori: ''
-      }),
-    },
-    isEdit: {
-      type: Boolean,
-      default: false,
-    },
-  },
   data() {
     return {
-      recipe: { ...this.initialRecipe },
+      judul: '',
+      deskripsi: '',
+      fileGambar: null,
+      urlGambar: '',
+      asal: '',
+      kategori: ''
     };
   },
   methods: {
+    onFileChange(event) {
+      this.fileGambar = event.target.files[0];
+    },
     async submitRecipe() {
       try {
-        if (this.isEdit) {
-          // Update resep di Firestore
-          await firestore.collection('resep').doc(this.recipe.id).update({
-            Judul: this.recipe.judul,
-            Deskripsi: this.recipe.deskripsi,
-            "URL Gambar": this.recipe.urlGambar,
-            Asal: this.recipe.asal,
-            Kategori: this.recipe.kategori,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          console.log("Resep berhasil diperbarui!", this.recipe.id);
-          alert("Resep berhasil diperbarui!");
-        } else {
-          // Tambahkan resep baru ke Firestore
-          const docRef = await firestore.collection('resep').add({
-            Judul: this.recipe.judul,
-            Deskripsi: this.recipe.deskripsi,
-            "URL Gambar": this.recipe.urlGambar,
-            Asal: this.recipe.asal,
-            Kategori: this.recipe.kategori,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          console.log("Resep berhasil ditambahkan!", docRef.id);
-          alert("Resep berhasil diunggah!");
+        if (this.fileGambar) {
+          // Upload gambar ke Firebase Storage
+          const storageRef = storage.ref();
+          const fileRef = storageRef.child(`images/${this.fileGambar.name}`);
+          await fileRef.put(this.fileGambar);
+
+          // Dapatkan URL gambar
+          this.urlGambar = await fileRef.getDownloadURL();
         }
+
+        // Simpan resep ke Firestore
+        const docRef = await firestore.collection('resep').add({
+          Judul: this.judul,
+          Deskripsi: this.deskripsi,
+          "URL Gambar": this.urlGambar,
+          Asal: this.asal,
+          Kategori: this.kategori,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        console.log("Resep berhasil ditambahkan!", docRef.id);
+
+        // Menampilkan pesan sukses
+        alert("Resep berhasil diunggah!");
+
+        // Redirect ke halaman utama
         this.$router.push('/');
+
       } catch (error) {
-        console.error("Error adding/updating recipe: ", error);
+        console.error("Error adding recipe: ", error);
+        // Menampilkan pesan error
         alert("Terjadi kesalahan saat mengunggah resep.");
       }
-    },
-    resetForm() {
-      this.recipe = { judul: '', deskripsi: '', urlGambar: '', asal: '', kategori: '' };
-      this.$emit("cancel");
-    },
-  },
+    }
+  }
 };
+
 </script>
 
 <style scoped>
