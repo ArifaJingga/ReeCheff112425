@@ -1,92 +1,67 @@
 <template>
   <div class="container">
-    <h1>{{ isEdit ? 'Edit Resep' : 'Unggah Resep Baru' }}</h1>
+    <h1>Unggah Resep Baru</h1>
     <form @submit.prevent="submitRecipe">
       <label for="judul">Judul:</label>
-      <input type="text" id="judul" v-model="recipe.judul" required>
+      <input type="text" id="judul" v-model="judul" required>
 
       <label for="deskripsi">Deskripsi:</label>
-      <textarea id="deskripsi" v-model="recipe.deskripsi" required></textarea>
+      <textarea id="deskripsi" v-model="deskripsi" required></textarea>
 
       <label for="urlGambar">URL Gambar:</label>
-      <input type="text" id="urlGambar" v-model="recipe.urlGambar" required>
+      <input type="text" id="urlGambar" v-model="urlGambar" required>
 
       <label for="asal">Asal:</label>
-      <input type="text" id="asal" v-model="recipe.asal" required>
+      <input type="text" id="asal" v-model="asal" required>
 
       <label for="kategori">Kategori:</label>
-      <input type="text" id="kategori" v-model="recipe.kategori" required>
+      <input type="text" id="kategori" v-model="kategori" required>
 
-      <button class="btn" type="submit">{{ isEdit ? 'Update Resep' : 'Unggah Resep' }}</button>
-      <button class="btn" type="button" @click="resetForm">Batal</button>
+      <button class="btn" type="submit">Unggah Resep</button>
     </form>
   </div>
 </template>
 
 <script>
-import { firestore } from '~/plugins/firebase.js';
 
 export default {
-  props: {
-    initialRecipe: {
-      type: Object,
-      default: () => ({
-        judul: '',
-        deskripsi: '',
-        urlGambar: '',
-        asal: '',
-        kategori: ''
-      }),
-    },
-    isEdit: {
-      type: Boolean,
-      default: false,
-    },
-  },
   data() {
     return {
-      recipe: { ...this.initialRecipe },
+      judul: '',
+      deskripsi: '',
+      urlGambar: '',
+      asal: '',
+      kategori: ''
     };
   },
   methods: {
     async submitRecipe() {
       try {
-        if (this.isEdit) {
-          // Update resep di Firestore
-          await firestore.collection('resep').doc(this.recipe.id).update({
-            Judul: this.recipe.judul,
-            Deskripsi: this.recipe.deskripsi,
-            "URL Gambar": this.recipe.urlGambar,
-            Asal: this.recipe.asal,
-            Kategori: this.recipe.kategori,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          console.log("Resep berhasil diperbarui!", this.recipe.id);
-          alert("Resep berhasil diperbarui!");
-        } else {
-          // Tambahkan resep baru ke Firestore
-          const docRef = await firestore.collection('resep').add({
-            Judul: this.recipe.judul,
-            Deskripsi: this.recipe.deskripsi,
-            "URL Gambar": this.recipe.urlGambar,
-            Asal: this.recipe.asal,
-            Kategori: this.recipe.kategori,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          console.log("Resep berhasil ditambahkan!", docRef.id);
-          alert("Resep berhasil diunggah!");
-        }
+        // Simpan resep ke Firestore
+        const docRef = await firestore.collection('resep').add({
+          Judul: this.judul,
+          Deskripsi: this.deskripsi,
+          "URL Gambar": this.urlGambar,
+          Asal: this.asal,
+          Kategori: this.kategori,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        console.log("Resep berhasil ditambahkan!", docRef.id);
+
+        // Menampilkan pesan sukses
+        alert("Resep berhasil diunggah!");
+
+        // Redirect ke halaman utama
         this.$router.push('/');
+
       } catch (error) {
-        console.error("Error adding/updating recipe: ", error);
+        console.error("Error adding recipe: ", error);
+        // Menampilkan pesan error
         alert("Terjadi kesalahan saat mengunggah resep.");
       }
-    },
-    resetForm() {
-      this.recipe = { judul: '', deskripsi: '', urlGambar: '', asal: '', kategori: '' };
-      this.$emit("cancel");
-    },
-  },
+    }
+  }
 };
 </script>
 
