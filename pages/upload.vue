@@ -20,7 +20,6 @@
 </template>
 
 <script>
-
 export default {
   data() {
     return {
@@ -33,27 +32,29 @@ export default {
   methods: {
     async submitRecipe() {
       try {
-        // Simpan resep ke Firestore
-        const docRef = await firestore.collection('resep').add({
-          Judul: this.judul,
-          Deskripsi: this.deskripsi,
-          Asal: this.asal,
-          Kategori: this.kategori,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        const response = await fetch('http://localhost:3000/api/resep', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            judul: this.judul,
+            deskripsi: this.deskripsi,
+            asal: this.asal,
+            kategori: this.kategori
+          })
         });
 
-        console.log("Resep berhasil ditambahkan!", docRef.id);
-
-        // Tampilkan pesan sukses
-        alert("Resep berhasil diunggah!");
-
-        // Redirect ke halaman utama
-        this.$router.push('/');
-
+        if (response.ok) {
+          console.log("Resep berhasil ditambahkan!");
+          alert("Resep berhasil diunggah!");
+          this.$router.push('/');
+        } else {
+          throw new Error('Terjadi kesalahan saat mengunggah resep.');
+        }
       } catch (error) {
         console.error("Error adding recipe: ", error);
-        // Tampilkan pesan error
-        alert("Terjadi kesalahan saat mengunggah resep.");
+        alert(error.message);
       }
     }
   }
