@@ -1,52 +1,64 @@
 <template>
   <div class="recipe-container">
     <header>
-      <h1>Mie Aceh</h1>
+      <h1>{{ recipe.title }}</h1>
     </header>
 
     <main>
       <div class="recipe-content">
-        <img src="/assets/mie aceh.jpg" alt="Mie Aceh" class="recipe-image">
+        <img :src="recipe.image" :alt="recipe.title" class="recipe-image">
         <section>
           <h2>Bahan-bahan</h2>
           <ul>
-            <li>200 gram mie kuning</li>
-            <li>150 gram daging sapi, iris tipis</li>
-            <li>2 butir telur, kocok lepas</li>
-            <li>100 gram kol, iris tipis</li>
-            <li>100 gram tauge</li>
-            <li>2 batang daun bawang, iris halus</li>
-            <li>2 buah tomat, potong-potong</li>
-            <li>4 siung bawang putih, cincang halus</li>
-            <li>6 butir bawang merah, cincang halus</li>
-            <li>2 buah cabai merah, iris tipis</li>
-            <li>2 sdm kecap manis</li>
-            <li>2 sdm saus tiram</li>
-            <li>1 sdm kecap asin</li>
-            <li>1 sdt garam</li>
-            <li>1/2 sdt merica</li>
-            <li>2 sdm minyak goreng</li>
+            <li v-for="(ingredient, index) in parsedIngredients" :key="index">{{ ingredient }}</li>
           </ul>
         </section>
 
         <section>
           <h2>Cara Membuat</h2>
           <ol>
-            <li>Rebus mie kuning hingga matang, tiriskan.</li>
-            <li>Panaskan minyak goreng di wajan, tumis bawang putih, bawang merah, dan cabai merah hingga harum.</li>
-            <li>Masukkan daging sapi, tumis hingga berubah warna.</li>
-            <li>Tambahkan telur, aduk rata hingga telur matang.</li>
-            <li>Masukkan kol, tauge, dan daun bawang. Tumis hingga sayuran layu.</li>
-            <li>Masukkan mie kuning, aduk rata.</li>
-            <li>Tambahkan kecap manis, saus tiram, kecap asin, garam, dan merica. Aduk rata.</li>
-            <li>Masukkan tomat, aduk sebentar hingga tomat layu.</li>
-            <li>Angkat dan sajikan Mie Aceh selagi hangat.</li>
+            <li v-for="(step, index) in parsedSteps" :key="index">{{ step }}</li>
           </ol>
         </section>
       </div>
     </main>
   </div>
 </template>
+
+<script>
+
+export default {
+  data() {
+    return {
+      recipe: {
+        title: "",
+        image: "",
+        ingredients: "",
+        steps: ""
+      }
+    };
+  },
+  computed: {
+    parsedIngredients() {
+      return this.recipe.ingredients.split(", ");
+    },
+    parsedSteps() {
+      return this.recipe.steps.split(". ");
+    }
+  },
+  async created() {
+    try {
+      const querySnapshot = await getDocs(collection(db, "recipes"));
+      querySnapshot.forEach((doc) => {
+        // Assuming you have only one recipe document
+        this.recipe = doc.data();
+      });
+    } catch (error) {
+      console.error("Error fetching documents: ", error);
+    }
+  }
+};
+</script>
 
 <style>
 .recipe-container {
@@ -111,4 +123,5 @@ footer {
   border-radius: 0 0 10px 10px;
 }
 </style>
+
 
