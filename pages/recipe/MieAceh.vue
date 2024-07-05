@@ -26,8 +26,6 @@
 </template>
 
 <script>
-import { db } from "@/plugins/firebase"; // Pastikan jalur ini benar sesuai dengan struktur proyek Anda
-import { collection, getDocs } from "firebase/firestore";
 
 export default {
   data() {
